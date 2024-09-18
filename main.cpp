@@ -1,35 +1,38 @@
-#include <iostream>
 #include <termios.h>
 #include <unistd.h>
+#include "Game.h"
 
-void setRawMode() {
-    struct termios newt;
-    tcgetattr(STDIN_FILENO, &newt);
-    newt.c_lflag &= ~(ICANON | ECHO); // Выключаем канонический режим и эхо
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-}
+int main(int argc, char const *argv[]) {
+    struct termios oldt, newt;
+    int ch;
 
-void resetMode(struct termios& oldt) {
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-}
+    Game root;
+    root.scene();
 
-int main() {
-    struct termios oldt;
-    tcgetattr(STDIN_FILENO, &oldt); // Сохранение текущих настроек
+    cout << "PRESS ANY KEY TO START" << endl;
+    while(true){
+        tcgetattr(STDIN_FILENO, &oldt);
+        newt = oldt;
+        newt.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+        ch = getchar();
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+        cout<<ch<<endl;
 
-    setRawMode(); // Установка сырого режима
 
-    std::cout << "Нажимайте клавиши (ESC для выхода):" << std::endl;
 
-    while (true) {
-        char c;
-        read(STDIN_FILENO, &c, 1); // Чтение одного символа
-        if (c == 27) { // ESC для выхода
-            break;
+        if(ch == 27) break;
+        if(ch == 97){ // a
+            root.moveRight();
+        }  
+        if(ch == 100);{ // d
+            root.moveLeft();
         }
-        std::cout << "Нажата клавиша: " << c << std::endl;
-    }
+        if(ch == 32); // space
 
-    resetMode(oldt); // Сброс настроек терминала
-    return 0;
+        
+        root.fall();
+        root.print_block();
+        root.print_scene();
+    }
 }
