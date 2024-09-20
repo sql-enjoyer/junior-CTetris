@@ -28,6 +28,18 @@ public:
     void setX(const int x_inp){ x = x_inp; }
     void setY(const int y_inp){ y = y_inp; }
 
+    void flip() {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = i; j < 3 - i - 1; ++j) {
+                int temp = obj[i][j];
+                obj[i][j] = obj[2 - j][i];
+                obj[2 - j][i] = obj[2 - i][2 - j];
+                obj[2 - i][2 - j] = obj[j][2 - i];
+                obj[j][2 - i] = temp;
+            }
+        }
+    }
+
 private:
     int x;
     int y;
@@ -52,14 +64,14 @@ private:
         },
 
         {
+        {' ', ' ', ' '},
         {'@', '@', ' '},
-        {' ', '@', ' '},
         {' ', '@', '@'}
         },
 
         {
+        {' ', ' ', ' '},
         {' ', '@', '@'},
-        {' ', '@', ' '},
         {'@', '@', ' '}
         },
 
@@ -80,10 +92,12 @@ public:
     void print_block();
 
     void fall();
+    void flip();
     void moveRight();
     void moveLeft();
     void startPos();
 
+    void check_row();
     void check_floor();
     void check_walls_right();
     void check_walls_left();
@@ -135,6 +149,13 @@ void Game::fall(){
     print_block();
 }
 
+void Game::flip(){
+    check_floor();
+    clean();
+    block.flip();
+    print_block();
+}
+
 void Game::moveRight(){
     clean();
     check_walls_right();
@@ -154,8 +175,24 @@ void Game::startPos(){
     block.setX(60);
     block.randomBlock();
     print_block();
+    check_row();
 }
 
+void Game::check_row(){
+    int border = width/4;
+    bool flag = true; 
+    for (int i = height-2; i > -1; --i) {
+        for (int j = border+1 ; j < width-border-1; ++j) {
+            if(screen[j + i * width] == ' '){
+                flag = false;
+                break;
+            }
+        }
+        if(flag) 
+            cout << "ROW" << endl;
+        flag = true;
+    }
+}
 
 void Game::check_walls_right(){
     for(int i=0; i < 3; i++) {
