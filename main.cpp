@@ -17,22 +17,18 @@ int main(int argc, char const *argv[]) {
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
         ch = getchar();
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-        cout<<ch<<endl;
+        // cout<<ch<<endl;
 
-
-
-        if(ch == 27) break;
-        if(ch == 97){ // a
-            root.moveRight();
-        }  
-        if(ch == 100);{ // d
-            root.moveLeft();
+        switch(ch){
+        case 100:
+          root.moveRight();
+          break;
+        case 97:
+          root.moveLeft();
+          break;
         }
-        if(ch == 32); // space
 
-        
         root.fall();
-        root.print_block();
         root.print_scene();
     }
 }

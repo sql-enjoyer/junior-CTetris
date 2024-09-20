@@ -1,26 +1,74 @@
 #pragma once
 #include <iostream>
+#include <random>
 using namespace std;
 
 class Block{
 public:
-    Block(const int x_inp,const int y_inp):x(x_inp), y(y_inp){};
+    void randomBlock(){
+        int arr[6] = {0, 1, 2, 3, 4, 5};
+
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<> dis(0, sizeof(arr)/sizeof(arr[0])-1);
+
+        int randomEl = arr[dis(gen)];
+
+        for(char i=0; i < 3; ++i)
+            for(int j=0; j<3; ++j)
+                obj[i][j] = blocks[randomEl][i][j];
+    }
+
+    Block(const int x_inp,const int y_inp):x(x_inp), y(y_inp){ randomBlock(); };
 
     int const getX(){ return x; }
     int const getY(){ return y; }
-    char& getObj(int row, int col){ return obj[row][col]; } 
+    char& getObj(const int& row, const int& col){ return obj[row][col]; }
 
     void setX(const int x_inp){ x = x_inp; }
     void setY(const int y_inp){ y = y_inp; }
 
 private:
-    char obj[3][3]{
-        {' ', ' ', ' '},
-        {'@', '@', '@'},
-        {'@', ' ', ' '}
-    };
     int x;
     int y;
+    char obj[3][3];
+    char blocks[6][3][3]{
+        {
+        {' ', ' ', '@'},
+        {'@', '@', '@'},
+        {' ', ' ', ' '}
+        },
+
+        {
+        {'@', ' ', ' '},
+        {'@', '@', '@'},
+        {' ', ' ', ' '}
+        },
+
+        {
+        {' ', ' ', ' '},
+        {'@', '@', '@'},
+        {' ', ' ', ' '}
+        },
+
+        {
+        {'@', '@', ' '},
+        {' ', '@', ' '},
+        {' ', '@', '@'}
+        },
+
+        {
+        {' ', '@', '@'},
+        {' ', '@', ' '},
+        {'@', '@', ' '}
+        },
+
+        {
+        {' ', ' ', ' '},
+        {' ', '@', ' '},
+        {'@', '@', '@'}
+        }
+    };
 };
 
 class Game {
@@ -32,12 +80,13 @@ public:
     void print_block();
 
     void fall();
-    void moveRight(){}
-    void moveLeft(){}
+    void moveRight();
+    void moveLeft();
+    void startPos();
 
-    
     void check_floor();
-    // void check_walls();
+    void check_walls_right();
+    void check_walls_left();
 
 private:
     static const int width = 120, height = 39;
@@ -46,32 +95,6 @@ private:
 };
 
 Game::Game():block(60, 0){};
-
-void Game::print_block(){
-    for(int i=0; i<3; i++)
-        for(int j=0; j < 3; j++) 
-            if(block.getObj(i, j)=='@') screen[block.getX()+j + (block.getY()+i) * width] = '@';
-}
-
-void Game::clean(){
-    for(int i=0; i<3; i++)
-        for(int j=0; j < 3; j++) 
-            if(block.getObj(i, j)=='@') screen[block.getX()+j + (block.getY()+i) * width] = ' ';
-}
-
-void Game::fall(){
-    check_floor();
-    clean();
-    block.setY(block.getY()+1);
-}
-
-void Game::check_floor(){
-    for(int i=0; i < 3; i++) {
-        if(screen[block.getX()+i + (block.getY()+3) * width]!=' ' and block.getObj(2, i)=='@') block.setY(0);
-        else if(block.getObj(2, 0)==' ' and block.getObj(2, 1)==' ' and block.getObj(2, 2)==' ')
-            if(screen[block.getX()+i + (block.getY()+2) * width]!=' ' and block.getObj(1, i)=='@') block.setY(0);
-    }
-}
 
 void Game::scene(){
     int border = width/4;
@@ -85,7 +108,72 @@ void Game::scene(){
     }
 }
 
+void Game::clean(){
+    for(int i=0; i<3; i++)
+        for(int j=0; j < 3; j++) 
+            if(block.getObj(i, j)=='@') screen[block.getX()+j + (block.getY()+i) * width] = ' ';
+}
+
 void Game::print_scene(){
     for (char i : screen) cout << i;
     cout << endl;
+}
+
+void Game::print_block(){
+    for(int i=0; i<3; i++)
+        for(int j=0; j < 3; j++) 
+            if(block.getObj(i, j)=='@') screen[block.getX()+j + (block.getY()+i) * width] = '@';
+}
+
+
+
+
+void Game::fall(){
+    check_floor();
+    clean();
+    block.setY(block.getY()+1);
+    print_block();
+}
+
+void Game::moveRight(){
+    clean();
+    check_walls_right();
+    block.setX(block.getX()+1);
+    print_block();
+}
+
+void Game::moveLeft(){
+    clean();
+    check_walls_left();
+    block.setX(block.getX()-1);
+    print_block();
+}
+
+void Game::startPos(){
+    block.setY(0);
+    block.setX(60);
+    block.randomBlock();
+    print_block();
+}
+
+
+void Game::check_walls_right(){
+    for(int i=0; i < 3; i++) {
+        if(block.getObj(i, 2)=='@' and screen[block.getX()+3 + (block.getY()+i) * width]!=' ') block.setX(block.getX()-1);
+        else if(block.getObj(i, 2)==' ' and block.getObj(i, 1)=='@' and screen[block.getX()+2 + (block.getY()+i) * width]!=' ') block.setX(block.getX()-1);
+    }
+}
+
+void Game::check_walls_left(){
+    for(int i=0; i < 3; i++) {
+        if(block.getObj(i, 0)=='@' and screen[block.getX()-1 + (block.getY()+i) * width]!=' ') block.setX(block.getX()+1);
+        else if(block.getObj(i, 0)==' ' and block.getObj(i, 1)=='@' and screen[block.getX() + (block.getY()+i) * width]!=' ') block.setX(block.getX()+1);
+    }
+}
+
+void Game::check_floor(){
+    for(int i=0; i < 3; i++) {
+        if(block.getObj(2, i)=='@' and screen[block.getX()+i + (block.getY()+3) * width]!=' ') startPos();
+        else if(block.getObj(2, i)==' ' and block.getObj(1, i)=='@' and screen[block.getX()+i + (block.getY()+2) * width]!=' ') startPos();
+    }
 }
