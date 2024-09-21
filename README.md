@@ -11,11 +11,11 @@ Work Tetris in your console!
 
 ### Window
 You must set your window to `60x40` size to comfortable play
-[!warning] game was tested only on linux monjaro
+[!tip] game was tested only on linux monjaro
 
 ## Main files
-*Game.h* - main file with game functions
+**Game.h** - main file with game functions
 
-*main.cpp* - file with included `Game.h`
+**main.cpp** - file with included `Game.h`
 
 P.S. have a greate time)
