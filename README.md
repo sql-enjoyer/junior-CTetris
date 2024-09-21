@@ -10,7 +10,8 @@ Work Tetris in your console!
 
 ### Window
 You must set your window to `60x40` size to comfortable play
-[!tip]game was tested only on linux monjaro
+
+**!!!game was tested only on linux monjaro**
 
 ## Main files
 **Game.h** - main file with game functions
