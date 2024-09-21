@@ -1,7 +1,6 @@
 # CTetris
 Work Tetris in your console!
-![](https://github.com/sql-enjoyer/junior-CTetris
-/blob/master/image.png)
+![](https://github.com/sql-enjoyer/junior-CTetris/blob/master/image.png)
 
 ## How to play
 ### Movement
