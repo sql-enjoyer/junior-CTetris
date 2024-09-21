@@ -103,12 +103,12 @@ public:
     void check_walls_left();
 
 private:
-    static const int width = 120, height = 39;
+    static const int width = 60, height = 39;
     char screen[width * height];
     Block block;
 };
 
-Game::Game():block(60, 0){};
+Game::Game():block(width/2, 0){};
 
 void Game::scene(){
     int border = width/4;
@@ -172,7 +172,7 @@ void Game::moveLeft(){
 
 void Game::startPos(){
     block.setY(0);
-    block.setX(60);
+    block.setX(width/2);
     block.randomBlock();
     print_block();
     check_row();
@@ -182,14 +182,19 @@ void Game::check_row(){
     int border = width/4;
     bool flag = true; 
     for (int i = height-2; i > -1; --i) {
-        for (int j = border+1 ; j < width-border-1; ++j) {
+        for (int j = border+1; j < width-border-1; ++j) {
             if(screen[j + i * width] == ' '){
                 flag = false;
                 break;
             }
         }
-        if(flag) 
-            cout << "ROW" << endl;
+        if(flag){
+            for(int j=i; j > 3; --j){
+                for(int k = border+1; k < width-border-1; ++k){
+                    screen[k + j * width] = screen[k + (j-1) * width];
+                }
+            }
+        }
         flag = true;
     }
 }

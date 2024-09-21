@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]) {
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
         ch = getchar();
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-        cout<<ch<<endl;
+        // cout<<ch<<endl;
 
         switch(ch){
         case 100:
